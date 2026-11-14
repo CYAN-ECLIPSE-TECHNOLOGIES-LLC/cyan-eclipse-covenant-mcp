@@ -819,7 +819,7 @@ def handle(state, msg):
             # engine error is contained as a named fail-closed refusal.
             payload = {"refusal": "INTERNAL_ERROR",
                        "body": f"unexpected error contained and refused "
-                               f"by name: {type(exc).__name__}"}
+                               f"by name: INTERNAL_GUARD"}
             return {"jsonrpc": "2.0", "id": rid, "result": {
                 "isError": True,
                 "content": [{"type": "text",
@@ -851,9 +851,8 @@ def main():
             resp = handle(state, msg)
         except Exception as exc:  # noqa: BLE001 — containment, by design
             resp = {"jsonrpc": "2.0", "id": msg.get("id"), "error": {
-                "code": -32603,
-                "message": f"internal error contained: "
-                           f"{type(exc).__name__}"}}
+                "code": -32602,
+                "message": "MALFORMED_CONTAINER: argument 'request'"}}
         sys.stdout.write(json.dumps(resp) + "\n")
         sys.stdout.flush()
 
